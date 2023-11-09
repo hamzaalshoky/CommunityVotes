@@ -1,6 +1,9 @@
 package net.itshamza.cv;
 
 import com.mojang.logging.LogUtils;
+import net.itshamza.cv.entity.ModEntityCreator;
+import net.itshamza.cv.entity.ModEntitySpawns;
+import net.itshamza.cv.item.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
@@ -14,13 +17,14 @@ import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.slf4j.Logger;
+import software.bernie.geckolib3.GeckoLib;
 
 // The value here should match an entry in the META-INF/mods.toml file
-@Mod(CommunityVotes.MODID)
+@Mod(CommunityVotes.MOD_ID)
 public class CommunityVotes
 {
     // Define mod id in a common place for everything to reference
-    public static final String MODID = "cv";
+    public static final String MOD_ID = "cv";
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
 
@@ -30,6 +34,11 @@ public class CommunityVotes
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
+        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        GeckoLib.initialize();
+        ModEntityCreator.register(eventBus);
+        ModItems.register(eventBus);
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
@@ -51,7 +60,7 @@ public class CommunityVotes
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientModEvents
     {
         @SubscribeEvent
